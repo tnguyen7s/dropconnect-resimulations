@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import utility_functions
-from FourLayerNoDropoutConvNet import FourLayerNoDropoutConvNet
+from FourLayerNoDropoutConvNet28 import FourLayerNoDropoutConvNet28
 from utility_functions import load_checkpoint
 
 ################# DEVICE ####################
@@ -14,11 +14,11 @@ if GPU:
 
 
 ################# DATA ####################
-train_loader, test_loader = utility_functions.MNIST_loaders()
+train_loader, test_loader = utility_functions.MNIST_loaders_originals()
 
 ################# TRAIN ##################
 # model
-model = FourLayerNoDropoutConvNet()
+model = FourLayerNoDropoutConvNet28()
 
 # optimizer & scheduler
 optimizer, scheduler, epochs = utility_functions.mnist_cnn_optimizer(model)

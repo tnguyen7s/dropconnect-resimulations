@@ -88,6 +88,11 @@ def load_checkpoint(model_name:str, device):
   history = checkpoint['history']
 
   return model, history
+####################################### TRANSFORMS #####################################
+def subtractFromImageMean(imgTensor: torch.Tensor):
+  mean = imgTensor.flatten().mean()
+  return imgTensor-mean  
+  
 
 ####################################### DATASETS #######################################
 
@@ -149,6 +154,39 @@ def MNIST_augment_loaders(saved_path:str='./datasets', IMAGE_SIZE=20):
     transforms.Grayscale(),
     transforms.ToTensor(),
     transforms.Normalize(mean=(0, ), std=(1, ))
+  ])
+
+  # download 
+  train_set = datasets.MNIST(saved_path, train=True, transform=transformations, download=True)
+  test_set = datasets.MNIST(saved_path, train=False, transform=transformations, download=True)
+
+  # split training set to two loaders
+  train_loader =  DataLoader(dataset=train_set, batch_size=BATCH_SIZE, shuffle=True)
+
+  # test loader 
+  test_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, shuffle=True)
+
+  return train_loader,  test_loader
+
+def MNIST_loaders_originals(saved_path:str='./sample_data', IMAGE_SIZE=20):
+  '''
+  This function returns data loaders for the MNIST dataset, 
+  Using batch_size=128 and transformations according to the DropConnect paper http://proceedings.mlr.press/v28/wan13.pdf
+  No augmentation applied
+  Original image of size 28x28 returned
+  Subtract from mean
+  
+  Return
+  ======
+  train_loader (DataLoader): a dataloader using MNIST training set
+  test_loader (DataLoader): a dataloader using MNIST testing set
+  '''
+  BATCH_SIZE = 128
+
+  # transformations
+  transformations = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Lambda(subtractFromImageMean)
   ])
 
   # download 
